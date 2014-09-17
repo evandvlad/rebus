@@ -16,7 +16,7 @@
 
     'use strict';
 
-    var RE_KEY = /^[a-z][a-z\d]*$/i,
+    var RE_KEY = /^[a-z][a-z\d]*/i,
         KEY_SIGN = '@';
 
     function isRegExp(v){
@@ -29,12 +29,16 @@
 
         registry : Object.create(null),
 
-        register : function(key, pattern){
+        defvar : function(key, pattern){
+            var match;
+
             if(typeof this.registry[key] !== 'undefined'){
                 throw new Error('pattern with key: ' + key + ' is already register');
             }
 
-            if(!RE_KEY.test(key)){
+            match = key.match(RE_KEY);
+
+            if(!(match && match[0] === key)){
                 throw new Error('invalid key: ' + key);
             }
 
@@ -44,30 +48,32 @@
         },
 
         compile : function(pattern, mods){
-            var keys = Object.keys(this.registry),
+            var registry = this.registry,
+                keys = Object.keys(registry),
 
                 re = pattern.split(KEY_SIGN).reduce(function(acc, part, i){
-                    var isIdent = i % 2,
-                        result = part,
-                        kindx;
+                    var result = part,
+                        match;
 
-                    if(isIdent){
-                        kindx = keys.indexOf(part);
+                    if(i > 0){
+                        match = part.match(RE_KEY);
 
-                        if(kindx === -1){
+                        if(!match || keys.indexOf(match[0]) === -1){
                             throw new Error('key: ' + part + ' in pattern: ' + pattern + ' not found');
                         }
 
-                        result = this.registry[keys[kindx]];
+
+                        result = registry[match[0]] + part.slice(match[0].length);
                     }
 
                     return acc += result;
-                }.bind(this), '');
+                }, '');
 
                 return new RegExp(re, mods);
         },
 
         _regexpToString : function(pattern){
+            // remove modifiers & start/end slashes
             return ["/", pattern.source, "/"].join("").slice(1, -1);
         }
     };
