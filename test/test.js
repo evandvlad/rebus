@@ -21,39 +21,6 @@ describe('birch', function(){
             delete rebus.registry['a'];
         });
 
-        it('valid keys', function(){
-            var keys = [
-                'a',
-                'a123',
-                'test',
-                'TEST'
-            ];
-
-            keys.forEach(function(key){
-                rebus.defvar(key, '$');
-                delete rebus.registry[key];
-            });
-        });
-
-        it('invalid keys', function(){
-            var keys = [
-                'тест',
-                '$a123',
-                'test_test',
-                '123',
-                'test test',
-                'test-test'
-            ];
-
-            keys.forEach(function(key){
-                assert.throws(function(){
-                    rebus.defvar(key, '$');
-                });
-
-                delete rebus.registry[key];
-            });
-        });
-
     });
 
     describe('pattern processing', function(){
@@ -125,7 +92,7 @@ describe('birch', function(){
             rebus.defvar('a', '@');
             rebus.defvar('b', '#');
 
-            r1 = rebus.compile('@a@b');
+            r1 = rebus.compile('@{a}@{b}');
             assert.equal(r1.test('@#'), true);
             assert.equal(r1.test('#@'), false);
             assert.equal(r1.test('!!@####!!'), true);
@@ -140,7 +107,7 @@ describe('birch', function(){
             rebus.defvar('a', '@');
             rebus.defvar('b', '#');
 
-            r1 = rebus.compile('^@a@b$');
+            r1 = rebus.compile('^@{a}@{b}$');
             assert.equal(r1.test('@#'), true);
             assert.equal(r1.test('#@'), false);
             assert.equal(r1.test('!!@####!!'), false);
@@ -155,7 +122,7 @@ describe('birch', function(){
             rebus.defvar('a', 'a');
             rebus.defvar('b', 'b');
 
-            r1 = rebus.compile('^@a@b$', 'i');
+            r1 = rebus.compile('^@{a}@{b}$', 'i');
             assert.equal(r1.test('ab'), true);
             assert.equal(r1.test('Ab'), true);
             assert.equal(r1.test('aB'), true);
@@ -171,7 +138,7 @@ describe('birch', function(){
             rebus.defvar('a', 'a');
             rebus.defvar('b', 'b');
 
-            r1 = rebus.compile('a@a|@b');
+            r1 = rebus.compile('a@{a}|@{b}');
             assert.equal(r1.test('aab'), true);
             assert.equal(r1.test('aa'), true);
             assert.equal(r1.test('ab'), true);
@@ -188,7 +155,7 @@ describe('birch', function(){
             rebus.defvar('a', 'a');
             rebus.defvar('b', 'b');
 
-            r1 = rebus.compile('a(@a+)');
+            r1 = rebus.compile('a(@{a}+)');
             assert.equal(r1.test('aab'), true);
             assert.equal(r1.test('aa'), true);
             assert.equal(r1.test('ab'), false);
@@ -205,11 +172,26 @@ describe('birch', function(){
             rebus.defvar('a', 'a');
             rebus.defvar('b', 'b');
 
-            r1 = rebus.compile('a(@a*)');
+            r1 = rebus.compile('a(@{a}*)');
             assert.equal(r1.test('aab'), true);
             assert.equal(r1.test('aa'), true);
             assert.equal(r1.test('a'), true);
             assert.equal(r1.test('!!!!'), false);
+
+            delete rebus.registry['a'];
+            delete rebus.registry['b'];
+        });
+
+        it('ignore spaces', function(){
+            var r1;
+
+            rebus.defvar('a', 'a');
+            rebus.defvar('b', 'b');
+
+            r1 = rebus.compile('^ @{a} @{b} $');
+            assert.equal(r1.test('ab'), true);
+            assert.equal(r1.test('a b'), false);
+            assert.equal(r1.test(' a b '), false);
 
             delete rebus.registry['a'];
             delete rebus.registry['b'];

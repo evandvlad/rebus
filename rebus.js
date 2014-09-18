@@ -16,8 +16,8 @@
 
     'use strict';
 
-    var RE_KEY = /^[a-z][a-z\d]*/i,
-        KEY_SIGN = '@';
+    var RE_VAR = /\@\{([a-z][a-z\d]*)\}/g,
+        RE_SPACES = /[\s\n\t]+/g;
 
     function isRegExp(v){
         return Object.prototype.toString.call(v) === '[object RegExp]';
@@ -30,51 +30,29 @@
         registry : Object.create(null),
 
         defvar : function(key, pattern){
-            var match;
-
             if(typeof this.registry[key] !== 'undefined'){
                 throw new Error('pattern with key: ' + key + ' is already register');
             }
 
-            match = key.match(RE_KEY);
-
-            if(!(match && match[0] === key)){
-                throw new Error('invalid key: ' + key);
-            }
-
-            this.registry[key] = isRegExp(pattern) ? this._regexpToString(pattern) : pattern;
+            this.registry[key] = isRegExp(pattern) ?
+                // remove modifiers & start/end slashes
+                ["/", pattern.source, "/"].join("").slice(1, -1) :
+                pattern;
 
             return this;
         },
 
         compile : function(pattern, mods){
             var registry = this.registry,
-                keys = Object.keys(registry),
-
-                re = pattern.split(KEY_SIGN).reduce(function(acc, part, i){
-                    var result = part,
-                        match;
-
-                    if(i > 0){
-                        match = part.match(RE_KEY);
-
-                        if(!match || keys.indexOf(match[0]) === -1){
-                            throw new Error('key: ' + part + ' in pattern: ' + pattern + ' not found');
-                        }
-
-
-                        result = registry[match[0]] + part.slice(match[0].length);
+                str = pattern.replace(RE_SPACES, '').replace(RE_VAR, function(all, g1){
+                    if(typeof registry[g1] === 'undefined'){
+                        throw new Error('key: ' + g1 + ' in pattern: ' + pattern + ' not found');
                     }
 
-                    return acc += result;
-                }, '');
+                    return registry[g1];
+                });
 
-                return new RegExp(re, mods);
-        },
-
-        _regexpToString : function(pattern){
-            // remove modifiers & start/end slashes
-            return ["/", pattern.source, "/"].join("").slice(1, -1);
+                return new RegExp(str, mods);
         }
     };
 
