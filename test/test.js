@@ -180,4 +180,49 @@ describe('birch', function(){
             assert.equal(r1.test(' a b '), false);
         });
     });
+
+    describe('examples', function(){
+
+        it('ex 1', function(){
+            var rebus = new Rebus(),
+                r;
+
+            rebus.defvar('S', '@');
+            rebus.defvar('V', /[a-z][a-z\d]*/);
+
+            r = rebus.compile('^ @{S} \{ @{V} \} $', 'i');
+
+            assert.equal(r.test('@{var}'), true);
+            assert.equal(r.test('@{var124}'), true);
+            assert.equal(r.test('@{VAR124}'), true);
+
+            assert.equal(r.test('@{13VAR124}'), false);
+            assert.equal(r.test('@{{var}}'), false);
+            assert.equal(r.test('${{var}}'), false);
+            assert.equal(r.test('{var}'), false);
+        });
+
+        it('ex 2', function(){
+            var rebus = new Rebus(),
+                r;
+
+            rebus.defvar('digit', /\d/);
+            rebus.defvar('letter', /[a-z]/);
+            rebus.defvar('sign', /[_$]/);
+            rebus.defvar('head', rebus.compile('(@{sign} | @{letter})'));
+            rebus.defvar('tail', rebus.compile('(@{head} | @{digit})'));
+
+            r = rebus.compile('^ @{head} @{tail}* $', 'i');
+
+            assert.equal(r.test('$var'), true);
+            assert.equal(r.test('$___var___'), true);
+            assert.equal(r.test('_var'), true);
+            assert.equal(r.test('var'), true);
+            assert.equal(r.test('v1a2r3'), true);
+            assert.equal(r.test('VAR'), true);
+
+            assert.equal(r.test('1var'), false);
+            assert.equal(r.test('#var'), false);
+        });
+    });
 });

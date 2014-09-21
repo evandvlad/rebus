@@ -16,7 +16,7 @@
 
     'use strict';
 
-    var RE_VAR = /\@\{([a-z][a-z\d]*)\}/g,
+    var RE_VAR = /\@\{([a-z][a-z\d]*)\}/gi,
         RE_SPACES = /[\s\n\t]+/g;
 
     function isRegExp(v){
@@ -53,7 +53,7 @@
         return new RegExp(str, mods);
     };
 
-    Rebus.version = '0.0.0';
+    Rebus.version = '0.0.1';
 
     return Rebus;
 
