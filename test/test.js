@@ -96,6 +96,17 @@ describe('birch', function(){
             assert.equal(r1.test('!!@####!!'), true);
         });
 
+        it('escaped strings', function(){
+            var rebus = new Rebus(),
+                r1;
+
+            rebus.defvar('a', '\\.');
+
+            r1 = rebus.compile('@{a}');
+            assert.equal(r1.test('.'), true);
+            assert.equal(r1.test('t'), false);
+        });
+
         it('concat strings with limiters', function(){
             var rebus = new Rebus(),
                 r1;

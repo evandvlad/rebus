@@ -27,12 +27,12 @@
         this.registry = Object.create(null);
     }
 
-    Rebus.prototype.defvar = function(key, pattern){
-        if(typeof this.registry[key] !== 'undefined'){
-            throw new Error('pattern with key: ' + key + ' is already register');
+    Rebus.prototype.defvar = function(name, pattern){
+        if(typeof this.registry[name] !== 'undefined'){
+            throw new Error('variable : ' + name + ' is already register');
         }
 
-        this.registry[key] = isRegExp(pattern) ?
+        this.registry[name] = isRegExp(pattern) ?
             // remove modifiers & start/end slashes
             ["/", pattern.source, "/"].join("").slice(1, -1) :
             pattern;
@@ -53,7 +53,7 @@
         return new RegExp(str, mods);
     };
 
-    Rebus.version = '0.0.1';
+    Rebus.version = '0.0.2';
 
     return Rebus;
 
