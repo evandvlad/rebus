@@ -44,7 +44,7 @@
         var registry = this.registry,
             str = pattern.replace(RE_SPACES, '').replace(RE_VAR, function(all, g1){
                 if(typeof registry[g1] === 'undefined'){
-                    throw new Error('key: ' + g1 + ' in pattern: ' + pattern + ' not found');
+                    throw new Error('variable: ' + g1 + ' in pattern: ' + pattern + ' not found');
                 }
 
                 return registry[g1];
