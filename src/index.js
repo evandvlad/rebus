@@ -21,7 +21,7 @@ export default class {
     
     defvar(name, pattern){
         if(typeof this._registry[name] !== 'undefined'){
-            throw new Error(`variable: "@{name}" is already register`);
+            throw new Error(`rebus Error: variable "${name}" is already register`);
         }
 
         this._registry[name] = isRegExp(pattern) ?
@@ -36,7 +36,7 @@ export default class {
         let registry = this._registry,
             str = pattern.replace(RE_SPACES, '').replace(RE_VAR, (all, g1) => {
                 if(typeof registry[g1] === 'undefined'){
-                    throw new Error(`variable: "@{g1}" in pattern: "@{pattern}" not found`);
+                    throw new Error(`rebus Error: variable "${g1}" was not found in the pattern "${pattern}"`);
                 }
 
                 return registry[g1];

@@ -23,7 +23,7 @@ module.exports = {
 
                     assert.throws(function(){
                         rebus.defvar('a', '$');
-                    });
+                    }, /rebus Error: variable "a" is already register/);
                 });
             });
 
