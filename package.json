@@ -1,7 +1,7 @@
 {
   "name": "rebus",
   "author": "evandvlad",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Библиотека для сборки регулярных выражений из строк и других регулярных выражений.",
   "main": "./dist/rebus.js",
   "repository": {

@@ -136,6 +136,14 @@ module.exports = {
                     assert.equal(r1.test('a b'), false);
                     assert.equal(r1.test(' a b '), false);
                 });
+                
+                it('exception if use undefined variable', function(){
+                    var rebus = new Rebus();
+                        
+                    assert.throws(function(){
+                        rebus.compile('^ @{a} @{b} $');
+                    }, /rebus Error: variable "a" was not found in the pattern /);
+                });
             });
 
             describe('examples', function(){
