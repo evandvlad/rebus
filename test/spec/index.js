@@ -27,64 +27,6 @@ module.exports = {
                 });
             });
 
-            describe('pattern processing', function(){
-
-                it('not processing strings', function(){
-                    var rebus = new Rebus(),
-                        vals = [
-                            ['a', '@'],
-                            ['b', '\\d'],
-                            ['c', './.~!@#$%^&*()[]']
-                        ];
-
-                    vals.forEach(function(val){
-                        var key = val[0],
-                            s = val[1];
-
-                        rebus.defvar(key, s);
-                        assert.equal(rebus.registry[key], s);
-                    });
-                });
-
-                it('regexp constructors', function(){
-                    var rebus = new Rebus(),
-                        vals = [
-                            ['a', new RegExp('\\d'), '\\d'],
-                            ['b', new RegExp(/\d/), '\\d'],
-                            ['c', new RegExp('^\\d\\d$', 'gmi'), '^\\d\\d$'],
-                            ['d', new RegExp(/\d\d/i), '\\d\\d']
-                        ];
-
-                    vals.forEach(function(val){
-                        var key = val[0],
-                            obj = val[1],
-                            rs = val[2];
-
-                        rebus.defvar(key, obj);
-                        assert.equal(rebus.registry[key], rs);
-                    });
-                });
-
-                it('regexp literals', function(){
-                    var rebus = new Rebus(),
-                        vals = [
-                            ['a', /\d/, '\\d'],
-                            ['b', /\d/gmi, '\\d'],
-                            ['c', /^\d\d$/, '^\\d\\d$'],
-                            ['d', /\d\d/g, '\\d\\d']
-                        ];
-
-                    vals.forEach(function(val){
-                        var key = val[0],
-                            obj = val[1],
-                            rs = val[2];
-
-                        rebus.defvar(key, obj);
-                        assert.equal(rebus.registry[key], rs);
-                    });
-                });
-            });
-
             describe('compile', function(){
 
                 it('concat strings', function(){

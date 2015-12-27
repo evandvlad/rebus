@@ -6,41 +6,42 @@
 
 'use strict';
 
-var RE_VAR = /\@\{([a-z][a-z\d]*)\}/gi,
-    RE_SPACES = /[\s\n\t]+/g;
+const RE_VAR = /\@\{([a-z][a-z\d]*)\}/gi;
+const RE_SPACES = /[\s\n\t]+/g;
 
 function isRegExp(v){
     return Object.prototype.toString.call(v) === '[object RegExp]';
 }
 
-function Rebus(){
-    this.registry = Object.create(null);
-}
-
-Rebus.prototype.defvar = function(name, pattern){
-    if(typeof this.registry[name] !== 'undefined'){
-        throw new Error('variable: ' + name + ' is already register');
+export default class {
+    
+    constructor(){
+        this._registry = Object.create(null);
     }
+    
+    defvar(name, pattern){
+        if(typeof this._registry[name] !== 'undefined'){
+            throw new Error(`variable: "@{name}" is already register`);
+        }
 
-    this.registry[name] = isRegExp(pattern) ?
-        // remove modifiers & start/end slashes
-        ["/", pattern.source, "/"].join("").slice(1, -1) :
-        pattern;
+        this._registry[name] = isRegExp(pattern) ?
+            // remove modifiers & start/end slashes
+            ["/", pattern.source, "/"].join("").slice(1, -1) :
+            pattern;
 
-    return this;
-};
+        return this;
+    }
+    
+    compile(pattern, mods){
+        let registry = this._registry,
+            str = pattern.replace(RE_SPACES, '').replace(RE_VAR, (all, g1) => {
+                if(typeof registry[g1] === 'undefined'){
+                    throw new Error(`variable: "@{g1}" in pattern: "@{pattern}" not found`);
+                }
 
-Rebus.prototype.compile = function(pattern, mods){
-    var registry = this.registry,
-        str = pattern.replace(RE_SPACES, '').replace(RE_VAR, function(all, g1){
-            if(typeof registry[g1] === 'undefined'){
-                throw new Error('variable: ' + g1 + ' in pattern: ' + pattern + ' not found');
-            }
+                return registry[g1];
+            });
 
-            return registry[g1];
-        });
-
-    return new RegExp(str, mods);
-};
-
-export default Rebus;
+        return new RegExp(str, mods);
+    }
+}

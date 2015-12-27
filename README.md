@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/evandvlad/rebus.svg)](https://travis-ci.org/evandvlad/rebus)
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/9822f292909f46a3877bdc00b165c498)](https://www.codacy.com/app/evandvlad/rebus)
+[![Codacy Badge](https://api.codacy.com/project/badge/coverage/9822f292909f46a3877bdc00b165c498)](https://www.codacy.com/app/evandvlad/rebus)
+
 Библиотека для сборки регулярных выражений из строк и других регулярных выражений.
 
 Конструктор Rebus не принимает параметров. Каждый экземпляр Rebus имеет свое пространство переменных.
