@@ -15,7 +15,7 @@
     var rebus = new Rebus();
     
     rebus.defvar('a', 'string');
-    rebus.defvar('b', new RegExp('\\w');
+    rebus.defvar('b', new RegExp('\\w'));
     rebus.defvar('c', /\w/);
     
 Ключом должно быть значение удовлетворяющее регулярному выражению - /[a-z][a-z\d]*/i
